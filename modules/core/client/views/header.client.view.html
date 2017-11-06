@@ -1,0 +1,61 @@
+<div class="container" ng-controller="HeaderController as vm" >
+    <div class="bg-color" id="testheader">
+        <nav class="nav navbar-default navbar-fixed-top" role="navigation">
+
+          <div class="navbar-header">
+            <button class="navbar-toggle" type="button" ng-click="vm.isCollapsed = !vm.isCollapsed">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+              <a ui-sref="home" class="navbar-brand" id="navheader"><span style="color:#b271e8"><strong> Job Finder</strong></span></a>
+          </div>
+            <ul class="nav navbar-nav menuitems nav-items" ng-if="vm.menu.shouldRender(vm.authentication.user);">
+              <li ng-repeat="item in vm.menu.items | orderBy: 'position'" ng-if="item.shouldRender(vm.authentication.user);" ng-switch="item.type" ng-class="{ dropdown: item.type === 'dropdown' }" ui-sref-active="active" class="{{item.class}}" uib-dropdown="item.type === 'dropdown'">
+                <a ng-switch-when="dropdown" class="dropdown-toggle" uib-dropdown-toggle role="button">{{::item.title}}&nbsp;<span class="caret"></span></a>
+                <ul ng-switch-when="dropdown" class="dropdown-menu">
+                  <li ng-repeat="subitem in item.items | orderBy: 'position'" ng-if="subitem.shouldRender(vm.authentication.user);">
+                    <a ui-sref="{{subitem.state}}({{subitem.params}})" ng-bind="subitem.title"></a>
+                  </li>
+                </ul>
+                <a ng-switch-default ui-sref="{{item.state}}" ng-bind="item.title"></a>
+              </li>
+            </ul>
+            <div>
+                <form class="navbar-form navbar-left" role="search" ng-model="searchKeyword">
+                  <div class="form-group">
+                    <input type="text" class="form-control" ng-model = "searchKeyword" placeholder="Search Jobs">
+                  </div>
+                  <button ng-click="onSearch()" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Search</button>
+                </form>
+            </div>
+            <ul class="nav navbar-nav navbar-right logged-out-nav nav-items" ng-hide="vm.authentication.user">
+              <li ui-sref-active="active">
+                <a ui-sref="authentication.signup">Sign Up</a>
+              </li>
+              <li class="divider-vertical"></li>
+              <li ui-sref-active="active">
+                <a ui-sref="authentication.signin">Sign In</a>
+              </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" ng-show="vm.authentication.user">
+              <li class="dropdown" uib-dropdown>
+                <a class="dropdown-toggle user-header-dropdown-toggle" uib-dropdown-toggle role="button">
+                  <img ng-src="/{{vm.authentication.user.profileImageURL}}" alt="{{vm.authentication.user.displayName}}" class="header-profile-image" />
+                  <span class="nav-items" ng-bind="vm.authentication.user.displayName"></span> <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu setting-items" role="menu">
+                  <li ui-sref-active="active" ng-repeat="item in vm.accountMenu.items">
+                    <a ui-sref="{{item.state}}" ng-bind="item.title"></a>
+                  </li>
+                  <li class="divider"></li>
+                  <li>
+                    <a href="/api/auth/signout" target="_self">Signout</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+      </nav>
+    </div>
+</div>
